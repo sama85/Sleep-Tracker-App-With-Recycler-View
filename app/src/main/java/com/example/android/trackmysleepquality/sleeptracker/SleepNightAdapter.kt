@@ -15,3 +15,47 @@
  */
 
 package com.example.android.trackmysleepquality.sleeptracker
+
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.example.android.trackmysleepquality.R
+import com.example.android.trackmysleepquality.TextItemViewHolder
+import com.example.android.trackmysleepquality.database.SleepNight
+
+class SleepNightAdapter : RecyclerView.Adapter<TextItemViewHolder>(){
+
+    //adapter takes data to adapt to rv as a list
+    var data = listOf<SleepNight>()
+        set(value) {
+            field = value
+            //rv refreshes all displayed items according to updated list
+            //can be slow with complex viewholders to obscure scrolling
+            notifyDataSetChanged()
+        }
+
+    override fun getItemCount() = data.size
+
+    //binds data of given position in list to given vh
+    override fun onBindViewHolder(holder: TextItemViewHolder, position: Int) {
+        val item = data[position]
+        holder.textView.text = item.sleepQuality.toString()
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TextItemViewHolder {
+        //views must be inflated in vh when created
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val view = layoutInflater.inflate(R.layout.text_item_view, parent, false) as TextView
+        //create vh with inflated views
+        return TextItemViewHolder(view)
+    }
+
+    /*
+    Rv works as follows:
+        1. get items count
+        2. create vh enough for screen size
+        3. bind data from list to vh
+        4. reuse vh on scrolling and repeat from step 3
+     */
+}
