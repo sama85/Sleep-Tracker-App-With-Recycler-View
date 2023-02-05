@@ -38,7 +38,7 @@ Rv works as follows:
  */
 
 
-class SleepNightAdapter : RecyclerView.Adapter<SleepNightAdapter.ViewHolder>() {
+class SleepNightAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     //adapter takes data to adapt to rv as a list
     var data = listOf<SleepNight>()
@@ -52,10 +52,10 @@ class SleepNightAdapter : RecyclerView.Adapter<SleepNightAdapter.ViewHolder>() {
     override fun getItemCount() = data.size
 
     //binds data of given position in list to given vh
-    //Recyclerview.VIEW HOLDER TYPE TO BE GENERIC? HOW TO CAST THEN?
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = data[position]
-        holder.bind(item)
+        getItemViewType(position)
+        (holder as ViewHolder).bind(item)
     }
 
     //shouldn't return recylcerview.viewholder?
@@ -63,6 +63,10 @@ class SleepNightAdapter : RecyclerView.Adapter<SleepNightAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         //views must be inflated in vh when created
         return ViewHolder.from(parent)
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return super.getItemViewType(position)
     }
 
     //constructor called in onCreateViewHolder
@@ -108,6 +112,4 @@ class SleepNightAdapter : RecyclerView.Adapter<SleepNightAdapter.ViewHolder>() {
             )
         }
     }
-
-
 }
