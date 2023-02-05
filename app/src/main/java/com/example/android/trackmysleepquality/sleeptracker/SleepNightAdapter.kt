@@ -47,30 +47,7 @@ class SleepNightAdapter : RecyclerView.Adapter<SleepNightAdapter.ViewHolder>() {
         holder.bind(item)
     }
 
-    private fun ViewHolder.bind(item: SleepNight) {
-        val res = itemView.context.resources
-        if (item.sleepQuality <= 1)
-            sleepQuality.setTextColor(Color.RED)
-        //must reset color to black for high qualities bec this holder is reused and could be
-        //modified by previous data
-        else
-            sleepQuality.setTextColor(Color.BLACK)
 
-        sleepQuality.text = convertNumericQualityToString(item.sleepQuality, res)
-        sleepLength.text =
-            convertDurationToFormatted(item.startTimeMilli, item.endTimeMilli, res)
-        sleepQualityImage.setImageResource(
-            when (item.sleepQuality) {
-                0 -> R.drawable.ic_sleep_0
-                1 -> R.drawable.ic_sleep_1
-                2 -> R.drawable.ic_sleep_2
-                3 -> R.drawable.ic_sleep_3
-                4 -> R.drawable.ic_sleep_4
-                5 -> R.drawable.ic_sleep_5
-                else -> R.drawable.ic_sleep_active
-            }
-        )
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         //views must be inflated in vh when created
@@ -95,5 +72,30 @@ class SleepNightAdapter : RecyclerView.Adapter<SleepNightAdapter.ViewHolder>() {
         val sleepQuality: TextView = itemView.findViewById(R.id.sleep_quality_text)
         val sleepLength: TextView = itemView.findViewById(R.id.sleep_length)
         val sleepQualityImage: ImageView = itemView.findViewById(R.id.sleep_quality_image)
+
+        fun bind(item: SleepNight) {
+            val res = itemView.context.resources
+            if (item.sleepQuality <= 1)
+                sleepQuality.setTextColor(Color.RED)
+            //must reset color to black for high qualities bec this holder is reused and could be
+            //modified by previous data
+            else
+                sleepQuality.setTextColor(Color.BLACK)
+
+            sleepQuality.text = convertNumericQualityToString(item.sleepQuality, res)
+            sleepLength.text =
+                convertDurationToFormatted(item.startTimeMilli, item.endTimeMilli, res)
+            sleepQualityImage.setImageResource(
+                when (item.sleepQuality) {
+                    0 -> R.drawable.ic_sleep_0
+                    1 -> R.drawable.ic_sleep_1
+                    2 -> R.drawable.ic_sleep_2
+                    3 -> R.drawable.ic_sleep_3
+                    4 -> R.drawable.ic_sleep_4
+                    5 -> R.drawable.ic_sleep_5
+                    else -> R.drawable.ic_sleep_active
+                }
+            )
+        }
     }
 }
