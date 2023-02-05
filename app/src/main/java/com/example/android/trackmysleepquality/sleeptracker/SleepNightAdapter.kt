@@ -38,7 +38,7 @@ Rv works as follows:
  */
 
 
-class SleepNightAdapter : RecyclerView.Adapter<SleepNightAdapter.ViewHolder>() {
+class SleepNightAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     //adapter takes data to adapt to rv as a list
     var data = listOf<SleepNight>()
@@ -52,17 +52,26 @@ class SleepNightAdapter : RecyclerView.Adapter<SleepNightAdapter.ViewHolder>() {
     override fun getItemCount() = data.size
 
     //binds data of given position in list to given vh
-    //Recyclerview.VIEW HOLDER TYPE TO BE GENERIC? HOW TO CAST THEN?
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = data[position]
-        holder.bind(item)
+        when(getItemViewType(position)) {
+           1 -> (holder as ViewHolder).bind(item)
+        }
     }
 
-    //shouldn't return recylcerview.viewholder?
-    //acc to type will call from method for each class?
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        //views must be inflated in vh when created
-        return ViewHolder.from(parent)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when(viewType) {
+            1 -> ViewHolder.from(parent)
+            else -> ViewHolder.from(parent)
+        }
+    }
+
+    //define mapping logic between item position and view type
+    //in case of facebook, how text posts, image posts and video posts for example are identified by position???
+    //HOW TO USE ENUMS IN VIEW HOLDER TYPE IDENTIFICATION?
+    override fun getItemViewType(position: Int): Int {
+        if(position >= 0) return ViewHolderTypes.SLEEP_RECORD.getType()
+        return super.getItemViewType(position)
     }
 
     //constructor called in onCreateViewHolder
@@ -109,5 +118,12 @@ class SleepNightAdapter : RecyclerView.Adapter<SleepNightAdapter.ViewHolder>() {
         }
     }
 
-
+    enum class ViewHolderTypes{
+        SLEEP_RECORD{
+            override fun getType(): Int {
+                return 1
+            }
+        };
+        abstract fun getType() : Int
+    }
 }
