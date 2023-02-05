@@ -28,6 +28,16 @@ import com.example.android.trackmysleepquality.convertDurationToFormatted
 import com.example.android.trackmysleepquality.convertNumericQualityToString
 import com.example.android.trackmysleepquality.database.SleepNight
 
+
+/*
+Rv works as follows:
+    1. get items count
+    2. create vh enough for screen size
+    3. bind data from list to vh
+    4. reuse vh on scrolling and repeat from step 3
+ */
+
+
 class SleepNightAdapter : RecyclerView.Adapter<SleepNightAdapter.ViewHolder>() {
 
     //adapter takes data to adapt to rv as a list
@@ -42,28 +52,18 @@ class SleepNightAdapter : RecyclerView.Adapter<SleepNightAdapter.ViewHolder>() {
     override fun getItemCount() = data.size
 
     //binds data of given position in list to given vh
+    //Recyclerview.VIEW HOLDER TYPE TO BE GENERIC? HOW TO CAST THEN?
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = data[position]
         holder.bind(item)
     }
 
-
-
+    //shouldn't return recylcerview.viewholder?
+    //acc to type will call from method for each class?
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         //views must be inflated in vh when created
-        val layoutInflater = LayoutInflater.from(parent.context)
-        val view = layoutInflater.inflate(R.layout.list_item_sleep_night, parent, false)
-        //create vh with inflated views
-        return ViewHolder(view)
+        return ViewHolder.from(parent)
     }
-
-    /*
-    Rv works as follows:
-        1. get items count
-        2. create vh enough for screen size
-        3. bind data from list to vh
-        4. reuse vh on scrolling and repeat from step 3
-     */
 
     //constructor called in onCreateViewHolder
     //inflated view is passed to view holder to know which view it holds
@@ -72,6 +72,16 @@ class SleepNightAdapter : RecyclerView.Adapter<SleepNightAdapter.ViewHolder>() {
         val sleepQuality: TextView = itemView.findViewById(R.id.sleep_quality_text)
         val sleepLength: TextView = itemView.findViewById(R.id.sleep_length)
         val sleepQualityImage: ImageView = itemView.findViewById(R.id.sleep_quality_image)
+
+        companion object {
+            //inflating xml layout to vh is specific to each vh class, so should be a method in vh
+            fun from(parent: ViewGroup): ViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val view = layoutInflater.inflate(R.layout.list_item_sleep_night, parent, false)
+                //create vh with inflated views
+                return ViewHolder(view)
+            }
+        }
 
         fun bind(item: SleepNight) {
             val res = itemView.context.resources
@@ -98,4 +108,6 @@ class SleepNightAdapter : RecyclerView.Adapter<SleepNightAdapter.ViewHolder>() {
             )
         }
     }
+
+
 }
