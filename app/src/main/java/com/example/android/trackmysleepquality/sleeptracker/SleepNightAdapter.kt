@@ -21,7 +21,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ListAdapter
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android.trackmysleepquality.R
 import com.example.android.trackmysleepquality.convertDurationToFormatted
@@ -38,22 +40,11 @@ Rv works as follows:
  */
 
 
-class SleepNightAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-    //adapter takes data to adapt to rv as a list
-    var data = listOf<SleepNight>()
-        set(value) {
-            field = value
-            //rv refreshes all displayed items according to updated list
-            //can be slow with complex viewholders to obscure scrolling
-            notifyDataSetChanged()
-        }
-
-    override fun getItemCount() = data.size
+class SleepNightAdapter : androidx.recyclerview.widget.ListAdapter<SleepNight, RecyclerView.ViewHolder>(SleepNightDiffCallback()){
 
     //binds data of given position in list to given vh
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val item = data[position]
+        val item = getItem(position)
         when(getItemViewType(position)) {
            1 -> (holder as ViewHolder).bind(item)
         }
@@ -125,5 +116,16 @@ class SleepNightAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
         };
         abstract fun getType() : Int
+    }
+}
+
+class SleepNightDiffCallback : DiffUtil.ItemCallback<SleepNight>(){
+    override fun areItemsTheSame(oldItem: SleepNight, newItem: SleepNight): Boolean {
+        return oldItem.nightId == newItem.nightId
+    }
+
+    //HOW DETERMINES CHANGED ITEMS WHEN IT COMPARES DIFFERENT IDS?
+    override fun areContentsTheSame(oldItem: SleepNight, newItem: SleepNight): Boolean {
+        return oldItem == newItem
     }
 }
