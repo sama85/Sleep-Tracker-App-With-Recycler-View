@@ -18,17 +18,14 @@ package com.example.android.trackmysleepquality.sleeptracker
 
 import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.ListAdapter
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android.trackmysleepquality.R
 import com.example.android.trackmysleepquality.convertDurationToFormatted
 import com.example.android.trackmysleepquality.convertNumericQualityToString
 import com.example.android.trackmysleepquality.database.SleepNight
+import com.example.android.trackmysleepquality.databinding.ListItemSleepNightBinding
 
 
 /*
@@ -65,37 +62,35 @@ class SleepNightAdapter : androidx.recyclerview.widget.ListAdapter<SleepNight, R
         return super.getItemViewType(position)
     }
 
+    //view/binding object should be passed to view holder so that it knows the view
     //constructor called in onCreateViewHolder
     //inflated view is passed to view holder to know which view it holds
     //define views as properties to be easily accessed in on bind view holder
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val sleepQuality: TextView = itemView.findViewById(R.id.sleep_quality_text)
-        val sleepLength: TextView = itemView.findViewById(R.id.sleep_length)
-        val sleepQualityImage: ImageView = itemView.findViewById(R.id.sleep_quality_image)
+    class ViewHolder(val binding: ListItemSleepNightBinding) : RecyclerView.ViewHolder(binding.root) {
 
         companion object {
             //inflating xml layout to vh is specific to each vh class, so should be a method in vh
             fun from(parent: ViewGroup): ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val view = layoutInflater.inflate(R.layout.list_item_sleep_night, parent, false)
+                val binding = ListItemSleepNightBinding.inflate(layoutInflater, parent, false)
                 //create vh with inflated views
-                return ViewHolder(view)
+                return ViewHolder(binding)
             }
         }
 
         fun bind(item: SleepNight) {
             val res = itemView.context.resources
             if (item.sleepQuality <= 1)
-                sleepQuality.setTextColor(Color.RED)
+                binding.sleepQualityText.setTextColor(Color.RED)
             //must reset color to black for high qualities bec this holder is reused and could be
             //modified by previous data
             else
-                sleepQuality.setTextColor(Color.BLACK)
+                binding.sleepQualityText.setTextColor(Color.BLACK)
 
-            sleepQuality.text = convertNumericQualityToString(item.sleepQuality, res)
-            sleepLength.text =
+            binding.sleepQualityText.text = convertNumericQualityToString(item.sleepQuality, res)
+            binding.sleepLength.text =
                 convertDurationToFormatted(item.startTimeMilli, item.endTimeMilli, res)
-            sleepQualityImage.setImageResource(
+            binding.sleepQualityImage.setImageResource(
                 when (item.sleepQuality) {
                     0 -> R.drawable.ic_sleep_0
                     1 -> R.drawable.ic_sleep_1
