@@ -16,14 +16,10 @@
 
 package com.example.android.trackmysleepquality.sleeptracker
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.android.trackmysleepquality.R
-import com.example.android.trackmysleepquality.convertDurationToFormatted
-import com.example.android.trackmysleepquality.convertNumericQualityToString
 import com.example.android.trackmysleepquality.database.SleepNight
 import com.example.android.trackmysleepquality.databinding.ListItemSleepNightBinding
 
@@ -37,13 +33,13 @@ Rv works as follows:
  */
 
 
-class SleepNightAdapter : androidx.recyclerview.widget.ListAdapter<SleepNight, RecyclerView.ViewHolder>(SleepNightDiffCallback()){
+class SleepNightAdapter(val listener: SleepNightListener) : androidx.recyclerview.widget.ListAdapter<SleepNight, RecyclerView.ViewHolder>(SleepNightDiffCallback()){
 
     //binds data of given position in list to given vh
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position)
         when(getItemViewType(position)) {
-           1 -> (holder as ViewHolder).bind(item)
+           1 -> (holder as ViewHolder).bind(item, listener)
         }
     }
 
@@ -78,7 +74,10 @@ class SleepNightAdapter : androidx.recyclerview.widget.ListAdapter<SleepNight, R
             }
         }
 
-        fun bind(item: SleepNight) {
+        fun bind(item: SleepNight, listener: SleepNightListener) {
+           binding.root.setOnClickListener{
+               listener.onSleepNightClicked(item)
+           }
            binding.sleepNight = item
            //WHAT DOES IT DO?
            binding.executePendingBindings()
@@ -104,4 +103,9 @@ class SleepNightDiffCallback : DiffUtil.ItemCallback<SleepNight>(){
     override fun areContentsTheSame(oldItem: SleepNight, newItem: SleepNight): Boolean {
         return oldItem == newItem
     }
+}
+
+interface SleepNightListener{
+    //takes night and displays data
+    fun onSleepNightClicked(night : SleepNight)
 }
