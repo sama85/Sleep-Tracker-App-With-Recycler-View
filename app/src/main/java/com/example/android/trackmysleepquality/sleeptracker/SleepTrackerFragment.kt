@@ -74,13 +74,20 @@ class SleepTrackerFragment : Fragment() {
 
         val listener = object : SleepNightListener{
             override fun onSleepNightClicked(night: SleepNight) {
-                Toast.makeText(context, "night ${night.nightId} is clicked!", Toast.LENGTH_SHORT).show()
+                sleepTrackerViewModel.onSleepNightClicked(night.nightId)
             }
         }
 
         val adapter = SleepNightAdapter(listener)
         binding.sleepList.adapter = adapter
 
+
+        sleepTrackerViewModel.navigateToSleepDataQuality.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                this.findNavController().navigate(SleepTrackerFragmentDirections.actionSleepTrackerFragmentToSleepDetailFragment(it))
+                sleepTrackerViewModel.onSleepDataQualityNavigated()
+            }
+        })
         //update adapter data when nights change
         sleepTrackerViewModel.nights.observe(viewLifecycleOwner, Observer {
             it?.let {
