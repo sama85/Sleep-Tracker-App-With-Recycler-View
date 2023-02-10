@@ -62,12 +62,6 @@ class SleepTrackerFragment : Fragment() {
                 ViewModelProvider(
                         this, viewModelFactory).get(SleepTrackerViewModel::class.java)
 
-        //create layout manager and assign it to recycler view
-        //xml of viewholder should be modified to grid style [width -> match parent to take up width of grid
-        //item acc to span count
-        val manager = GridLayoutManager(activity, 3)
-        binding.sleepList.layoutManager = manager
-
         binding.sleepTrackerViewModel = sleepTrackerViewModel
 
         binding.lifecycleOwner = this
@@ -81,6 +75,22 @@ class SleepTrackerFragment : Fragment() {
         val adapter = SleepNightAdapter(listener)
         binding.sleepList.adapter = adapter
 
+        //create layout manager and assign it to recycler view
+        //xml of viewholder should be modified to grid style [width -> match parent to take up width of grid
+        //item acc to span count
+        val manager = GridLayoutManager(activity, 3)
+        manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup(){
+            //HOW TO CHECK ITEM AT POSITION TO KNOW ITS TYPE AND ASSIGN SPAN COUNT ACCORDINGLY???
+            override fun getSpanSize(position: Int): Int {
+                val type = adapter.getItemViewType(position)
+                return when(type){
+                    ViewTypes.HEADER.getType() -> 3
+                    else -> 1
+                }
+            }
+        }
+        binding.sleepList.layoutManager = manager
+
 
         sleepTrackerViewModel.navigateToSleepDataQuality.observe(viewLifecycleOwner, Observer {
             it?.let {
@@ -91,7 +101,7 @@ class SleepTrackerFragment : Fragment() {
         //update adapter data when nights change
         sleepTrackerViewModel.nights.observe(viewLifecycleOwner, Observer {
             it?.let {
-                adapter.submitList(it)
+                adapter.addHeaderAndSubmitList(it)
             }
         })
 
