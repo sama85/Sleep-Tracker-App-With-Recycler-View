@@ -36,15 +36,14 @@ Rv works as follows:
     4. reuse vh on scrolling and repeat from step 3
  */
 
-
 class SleepNightAdapter(val listener: SleepNightListener) :
     androidx.recyclerview.widget.ListAdapter<DataItem, RecyclerView.ViewHolder>(
         SleepNightDiffCallback()
     ) {
 
     //WHY IN ANOTHER SCOPE WITH COROUTINES?
-    fun addHeaderAndSubmitList(list : List<SleepNight>?){
-        val items = when(list){
+    fun addHeaderAndSubmitList(list: List<SleepNight>?) {
+        val items = when (list) {
             null -> listOf(DataItem.HeaderItem)
             else -> listOf(DataItem.HeaderItem) + list.map { DataItem.sleepNightItem(it) }
         }
@@ -55,10 +54,10 @@ class SleepNightAdapter(val listener: SleepNightListener) :
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position)
         when (holder) {
-             is SleepNightViewHolder -> {
-                 val nightItem = item as DataItem.sleepNightItem
-                 holder.bind(nightItem.sleepNight, listener)
-             }
+            is SleepNightViewHolder -> {
+                val nightItem = item as DataItem.sleepNightItem
+                holder.bind(nightItem.sleepNight, listener)
+            }
         }
     }
 
@@ -71,20 +70,23 @@ class SleepNightAdapter(val listener: SleepNightListener) :
         }
     }
 
-    //define mapping logic between item position and view type
-    //in case of facebook, how text posts, image posts and video posts for example are identified by position???
-    //HOW TO USE ENUMS IN VIEW HOLDER TYPE IDENTIFICATION?
+    /*
+    define mapping logic between item position and view type
+    in case of facebook, how text posts, image posts and video posts for example are identified by position???
+    */
     override fun getItemViewType(position: Int): Int {
-        return when(getItem(position)){
+        return when (getItem(position)) {
             is DataItem.HeaderItem -> ViewTypes.HEADER.getType()
             is DataItem.sleepNightItem -> ViewTypes.SLEEP_NIGHT.getType()
         }
     }
 
-    //view/binding object should be passed to view holder so that it knows the view
-    //constructor called in onCreateViewHolder
-    //inflated view is passed to view holder to know which view it holds
-    //define views as properties to be easily accessed in on bind view holder
+    /*
+    view/binding object should be passed to view holder so that it knows the view
+    constructor called in onCreateViewHolder
+    inflated view is passed to view holder to know which view it holds
+    define views as properties to be easily accessed in on bind view holder
+     */
     class SleepNightViewHolder(val binding: ListItemSleepNightBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -108,7 +110,7 @@ class SleepNightAdapter(val listener: SleepNightListener) :
         }
     }
 
-    class HeaderViewHolder(view: View): RecyclerView.ViewHolder(view) {
+    class HeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         companion object {
             fun from(parent: ViewGroup): HeaderViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
@@ -135,24 +137,27 @@ interface SleepNightListener {
 }
 
 //each item need a unique id for diffUtil
-sealed class DataItem(){
+sealed class DataItem() {
 
-    abstract val Id : Long
-    class sleepNightItem(val sleepNight : SleepNight) : DataItem(){
+    abstract val Id: Long
+
+    class sleepNightItem(val sleepNight: SleepNight) : DataItem() {
         override val Id = sleepNight.nightId
     }
+
     //only 1 instance of header (list header)
-    object HeaderItem : DataItem(){
+    object HeaderItem : DataItem() {
         override val Id = Long.MIN_VALUE
     }
 }
 
-enum class ViewTypes{
-    SLEEP_NIGHT{
+enum class ViewTypes {
+    SLEEP_NIGHT {
         override fun getType() = 1
     },
-    HEADER{
+    HEADER {
         override fun getType() = 0
     };
-    abstract fun getType() : Int
+
+    abstract fun getType(): Int
 }

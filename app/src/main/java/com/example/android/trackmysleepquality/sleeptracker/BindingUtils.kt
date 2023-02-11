@@ -26,7 +26,7 @@ import com.example.android.trackmysleepquality.convertNumericQualityToString
 import com.example.android.trackmysleepquality.database.SleepNight
 
 @BindingAdapter("sleepDurationFormatted")
-fun TextView.setSleepDurationFormatted(item : SleepNight?){
+fun TextView.setSleepDurationFormatted(item: SleepNight?) {
     item?.let {
         if (item.sleepQuality <= 1) setTextColor(Color.RED)
         //must reset color to black for high qualities bec this holder is reused and could be
@@ -37,7 +37,7 @@ fun TextView.setSleepDurationFormatted(item : SleepNight?){
 }
 
 @BindingAdapter("sleepQualityFormatted")
-fun TextView.setSleepQualityFormatted(item : SleepNight?){
+fun TextView.setSleepQualityFormatted(item: SleepNight?) {
     item?.let {
         if (item.sleepQuality <= 1) setTextColor(Color.RED)
         //must reset color to black for high qualities bec this holder is reused and could be
@@ -48,16 +48,18 @@ fun TextView.setSleepQualityFormatted(item : SleepNight?){
 }
 
 @BindingAdapter("sleepImage")
-fun ImageView.setSleepImage(item : SleepNight?){
+fun ImageView.setSleepImage(item: SleepNight?) {
     item?.let {
-        setImageResource(when (item.sleepQuality) {
-            0 -> R.drawable.ic_sleep_0
-            1 -> R.drawable.ic_sleep_1
-            2 -> R.drawable.ic_sleep_2
-            3 -> R.drawable.ic_sleep_3
-            4 -> R.drawable.ic_sleep_4
-            5 -> R.drawable.ic_sleep_5
-            else -> R.drawable.ic_sleep_active
-        })
+        setImageResource(
+            when (item.sleepQuality) {
+                0 -> R.drawable.ic_sleep_0
+                1 -> R.drawable.ic_sleep_1
+                2 -> R.drawable.ic_sleep_2
+                3 -> R.drawable.ic_sleep_3
+                4 -> R.drawable.ic_sleep_4
+                5 -> R.drawable.ic_sleep_5
+                else -> R.drawable.ic_sleep_active
+            }
+        )
     }
 }
