@@ -31,8 +31,9 @@ import androidx.lifecycle.viewModelScope
  * ViewModel for SleepTrackerFragment.
  */
 class SleepTrackerViewModel(
-        val database: SleepDatabaseDao,
-        application: Application) : AndroidViewModel(application) {
+    val database: SleepDatabaseDao,
+    application: Application
+) : AndroidViewModel(application) {
 
     /**
      * viewModelJob allows us to cancel all coroutines started by this ViewModel.
@@ -48,7 +49,7 @@ class SleepTrackerViewModel(
      * By default, all coroutines started in uiScope will launch in [Dispatchers.Main] which is
      * the main thread on Android. This is a sensible default because most coroutines started by
      * a [ViewModel] update the UI after performing some processing.
-     */
+    */
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
      */
 
@@ -104,7 +105,8 @@ class SleepTrackerViewModel(
      * This is private because we don't want to expose setting this value to the Fragment.
      */
 
-    private val _navigateToSleepQuality = MutableLiveData<SleepNight>()
+    private val _navigateToSleepQuality = MutableLiveData<SleepNight?>()
+
     /**
      * Call this immediately after calling `show()` on a toast.
      *
@@ -119,7 +121,7 @@ class SleepTrackerViewModel(
     /**
      * If this is non-null, immediately navigate to [SleepQualityFragment] and call [doneNavigating]
      */
-    val navigateToSleepQuality: LiveData<SleepNight>
+    val navigateToSleepQuality: LiveData<SleepNight?>
         get() = _navigateToSleepQuality
 
     /**
@@ -132,8 +134,8 @@ class SleepTrackerViewModel(
         _navigateToSleepQuality.value = null
     }
 
-    private val _navigateToSleepDataQuality = MutableLiveData<Long>()
-    val navigateToSleepDataQuality
+    private val _navigateToSleepDataQuality = MutableLiveData<Long?>()
+    val navigateToSleepDataQuality : LiveData<Long?>
         get() = _navigateToSleepDataQuality
 
     fun onSleepNightClicked(id: Long) {
@@ -163,11 +165,11 @@ class SleepTrackerViewModel(
      */
     private suspend fun getTonightFromDatabase(): SleepNight? {
         //return withContext(Dispatchers.IO) {
-            var night = database.getTonight()
-            if (night?.endTimeMilli != night?.startTimeMilli) {
-                night = null
-            }
-            return night
+        var night = database.getTonight()
+        if (night?.endTimeMilli != night?.startTimeMilli) {
+            night = null
+        }
+        return night
         //}
     }
 
@@ -248,8 +250,8 @@ class SleepTrackerViewModel(
      * using memory and resources.
 
     override fun onCleared() {
-        super.onCleared()
-        viewModelJob.cancel()
+    super.onCleared()
+    viewModelJob.cancel()
     }
      */
 }

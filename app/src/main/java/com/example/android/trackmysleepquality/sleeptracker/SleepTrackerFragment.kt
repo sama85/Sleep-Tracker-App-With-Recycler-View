@@ -45,12 +45,15 @@ class SleepTrackerFragment : Fragment() {
      *
      * This function uses DataBindingUtil to inflate R.layout.fragment_sleep_quality.
      */
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
         // Get a reference to the binding object and inflate the fragment views.
         val binding: FragmentSleepTrackerBinding = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_sleep_tracker, container, false)
+            inflater, R.layout.fragment_sleep_tracker, container, false
+        )
 
         val application = requireNotNull(this.activity).application
 
@@ -59,14 +62,15 @@ class SleepTrackerFragment : Fragment() {
         val viewModelFactory = SleepTrackerViewModelFactory(dataSource, application)
 
         val sleepTrackerViewModel =
-                ViewModelProvider(
-                        this, viewModelFactory).get(SleepTrackerViewModel::class.java)
+            ViewModelProvider(
+                this, viewModelFactory
+            ).get(SleepTrackerViewModel::class.java)
 
         binding.sleepTrackerViewModel = sleepTrackerViewModel
 
         binding.lifecycleOwner = this
 
-        val listener = object : SleepNightListener{
+        val listener = object : SleepNightListener {
             override fun onSleepNightClicked(night: SleepNight) {
                 sleepTrackerViewModel.onSleepNightClicked(night.nightId)
             }
@@ -79,11 +83,11 @@ class SleepTrackerFragment : Fragment() {
         //xml of viewholder should be modified to grid style [width -> match parent to take up width of grid
         //item acc to span count
         val manager = GridLayoutManager(activity, 3)
-        manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup(){
+        manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             //HOW TO CHECK ITEM AT POSITION TO KNOW ITS TYPE AND ASSIGN SPAN COUNT ACCORDINGLY???
             override fun getSpanSize(position: Int): Int {
                 val type = adapter.getItemViewType(position)
-                return when(type){
+                return when (type) {
                     ViewTypes.HEADER.getType() -> 3
                     else -> 1
                 }
@@ -94,7 +98,11 @@ class SleepTrackerFragment : Fragment() {
 
         sleepTrackerViewModel.navigateToSleepDataQuality.observe(viewLifecycleOwner, Observer {
             it?.let {
-                this.findNavController().navigate(SleepTrackerFragmentDirections.actionSleepTrackerFragmentToSleepDetailFragment(it))
+                this.findNavController().navigate(
+                    SleepTrackerFragmentDirections.actionSleepTrackerFragmentToSleepDetailFragment(
+                        it
+                    )
+                )
                 sleepTrackerViewModel.onSleepDataQualityNavigated()
             }
         })
@@ -110,9 +118,9 @@ class SleepTrackerFragment : Fragment() {
         sleepTrackerViewModel.showSnackBarEvent.observe(viewLifecycleOwner, Observer {
             if (it == true) { // Observed state is true.
                 Snackbar.make(
-                        requireActivity().findViewById(android.R.id.content),
-                        getString(R.string.cleared_message),
-                        Snackbar.LENGTH_SHORT // How long to display the message.
+                    requireActivity().findViewById(android.R.id.content),
+                    getString(R.string.cleared_message),
+                    Snackbar.LENGTH_SHORT // How long to display the message.
                 ).show()
                 // Reset state to make sure the snackbar is only shown once, even if the device
                 // has a configuration change.
@@ -131,8 +139,9 @@ class SleepTrackerFragment : Fragment() {
                 // followed by back.
                 // Also: https://stackoverflow.com/questions/28929637/difference-and-uses-of-oncreate-oncreateview-and-onactivitycreated-in-fra
                 this.findNavController().navigate(
-                        SleepTrackerFragmentDirections
-                                .actionSleepTrackerFragmentToSleepQualityFragment(night.nightId))
+                    SleepTrackerFragmentDirections
+                        .actionSleepTrackerFragmentToSleepQualityFragment(night.nightId)
+                )
                 // Reset state to make sure we only navigate once, even if the device
                 // has a configuration change.
                 sleepTrackerViewModel.doneNavigating()
